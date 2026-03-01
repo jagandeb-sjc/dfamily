@@ -23,9 +23,9 @@ export default function Leaderboard({ entries, loading }) {
           <div className="flex-1 min-w-0">
             <p className="font-bold text-white truncate flex items-center gap-1">
               {entry.name || 'Anonymous'}
-              {index === 0 && <span>🏆🏆🏆</span>}
-              {index === 1 && <span>🏆🏆</span>}
-              {index === 2 && <span>🏆</span>}
+              {entry.weightLost > 0 && index === 0 && <span>🏆🏆🏆</span>}
+              {entry.weightLost > 0 && index === 1 && <span>🏆🏆</span>}
+              {entry.weightLost > 0 && index === 2 && <span>🏆</span>}
             </p>
             <p className="text-xs text-white/50">{entry.weeksLogged} log{entry.weeksLogged !== 1 ? 's' : ''} · {entry.streak ?? 0}w streak</p>
           </div>

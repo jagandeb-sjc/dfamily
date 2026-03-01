@@ -1,0 +1,16 @@
+/**
+ * Optional: Firebase Admin SDK for server-side operations (seed, export, cron).
+ *
+ * Setup:
+ * 1. Create service account: Firebase Console → Project Settings → Service accounts → Generate key
+ * 2. Save JSON and set GOOGLE_APPLICATION_CREDENTIALS=/path/to/key.json
+ * 3. npm install firebase-admin
+ *
+ * Usage (rename to firebaseAdmin.js):
+ *
+ * const admin = require('firebase-admin');
+ * if (!admin.apps.length) {
+ *   admin.initializeApp({ projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID });
+ * }
+ * export const db = admin.firestore();
+ */

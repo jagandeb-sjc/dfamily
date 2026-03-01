@@ -1,0 +1,39 @@
+{
+  "name": "dfamily-weights",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint",
+    "test": "jest",
+    "seed": "node scripts/seed-sample-data.js",
+    "export-data": "node scripts/export-data.js"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.3",
+    "date-fns": "^3.6.0",
+    "firebase": "^10.13.1",
+    "next": "^14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "recharts": "^3.7.0"
+  },
+  "optionalDependencies": {
+    "firebase-admin": "^12.0.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.24.7",
+    "@babel/preset-react": "^7.24.7",
+    "@testing-library/jest-dom": "^6.5.0",
+    "@testing-library/react": "^16.0.0",
+    "autoprefixer": "^10.4.20",
+    "babel-jest": "^29.7.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.10"
+  }
+}

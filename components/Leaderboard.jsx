@@ -82,7 +82,9 @@ export function buildLeaderboardEntries(users, weightsByUser, filter) {
     });
   }
   entries.sort((a, b) => {
-    if (b.weightLost !== a.weightLost) return b.weightLost - a.weightLost;
+    const aw = a.weightLost === -Infinity || Number.isNaN(a.weightLost) ? -Infinity : a.weightLost;
+    const bw = b.weightLost === -Infinity || Number.isNaN(b.weightLost) ? -Infinity : b.weightLost;
+    if (bw !== aw) return bw - aw;
     return (b.weeksLogged || 0) - (a.weeksLogged || 0);
   });
   return entries;

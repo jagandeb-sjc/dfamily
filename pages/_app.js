@@ -1,10 +1,10 @@
 import '../styles/globals.css';
 import { useState, useEffect } from 'react';
 import { Plus_Jakarta_Sans } from 'next/font/google';
-import { subscribeAuth, getUserProfile } from '../lib/firebaseClient.js';
-import Navbar from '../components/Navbar.jsx';
-import Footer from '../components/Footer.jsx';
-import FitnessBackground from '../components/FitnessBackground.jsx';
+import { subscribeAuth, getUserProfile } from '../lib/firebaseClient';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import FitnessBackground from '../components/FitnessBackground';
 
 
 const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-jakarta', weight: ['400','500','600','700','800'] });

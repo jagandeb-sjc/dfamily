@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
-import { format, parseISO } from 'date-fns';
-import { getWeightDateKey } from '../lib/dateUtils';
+import { format } from 'date-fns';
+import { getWeightDateKey, parseDateLocal } from '../lib/dateUtils';
 
 export default function WeightChart({ weights, startWeight, targetWeight }) {
   const data = useMemo(() => {
@@ -12,7 +12,7 @@ export default function WeightChart({ weights, startWeight, targetWeight }) {
         const dk = getWeightDateKey(w);
         return {
           dateKey: dk,
-          label: format(parseISO(dk), 'MMM d'),
+          label: format(parseDateLocal(dk), 'MMM d'),
           weight: Number(w.weight),
         };
       });
@@ -58,7 +58,7 @@ export default function WeightChart({ weights, startWeight, targetWeight }) {
             }}
             formatter={(value) => [`${value} lbs`, 'Weight']}
             labelFormatter={(_, payload) =>
-              payload?.[0]?.payload?.dateKey && format(parseISO(payload[0].payload.dateKey), 'MMM d, yyyy')
+              payload?.[0]?.payload?.dateKey && format(parseDateLocal(payload[0].payload.dateKey), 'MMM d, yyyy')
             }
           />
           {startWeight > 0 && <ReferenceLine y={startWeight} stroke="#a78bfa" strokeDasharray="4 4" strokeOpacity={0.8} />}

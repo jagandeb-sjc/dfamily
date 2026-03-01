@@ -1,4 +1,4 @@
-import { getStreakWeeks, getLatestWeight } from '../lib/dateUtils';
+import { getStreakWeeks, getLatestWeight, getWeekStartAgo } from '../lib/dateUtils';
 
 export default function Leaderboard({ entries, loading }) {
   if (loading) return <div className="text-center py-8 text-white/60 font-medium">Loading…</div>;
@@ -46,15 +46,6 @@ export default function Leaderboard({ entries, loading }) {
 
 function getDateKey(w) {
   return w.date || w.weekStart;
-}
-
-function getWeekStartAgo(weeks) {
-  const d = new Date();
-  d.setDate(d.getDate() - weeks * 7);
-  const day = d.getDay();
-  const mondayOffset = day === 0 ? -6 : 1 - day;
-  d.setDate(d.getDate() + mondayOffset);
-  return d.toISOString().slice(0, 10);
 }
 
 export function buildLeaderboardEntries(users, weightsByUser, filter) {

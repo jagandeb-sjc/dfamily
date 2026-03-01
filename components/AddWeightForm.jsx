@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getWeekStart, getTodayString } from '../lib/dateUtils';
+import { getTodayString } from '../lib/dateUtils';
 
 export default function AddWeightForm({ onSuccess, initialWeight }) {
   const [weight, setWeight] = useState(initialWeight ?? '');
@@ -25,9 +25,8 @@ export default function AddWeightForm({ onSuccess, initialWeight }) {
     }
     setLoading(true);
     try {
-      const today = getTodayString();
-      const weekStart = getWeekStart(today);
-      await onSuccess(num, weekStart);
+      const today = getTodayString(new Date());
+      await onSuccess(num, today);
       setWeight('');
     } catch (err) {
       setError(err.message || 'Try again');

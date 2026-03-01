@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import {
   getWeightsForUser,
-  setWeightForWeek,
+  setWeightForDate,
   getAllUsers,
   getAllWeights,
 } from '../lib/firebaseClient';
@@ -49,14 +49,14 @@ export default function DashboardPage({ user, profile, authReady }) {
     return () => { cancelled = true; };
   }, [authReady, user, router]);
 
-  const handleWeightSaved = async (weight, weekStart) => {
+  const handleWeightSaved = async (weight, dateKey) => {
     // Optimistic update: show new weight immediately
-    const newEntry = { weekStart, weight, date: weekStart, userId: user.uid };
+    const newEntry = { date: dateKey, weekStart: dateKey, weight, userId: user.uid };
     setWeights((prev) => {
-      const filtered = prev.filter((w) => (w.weekStart || w.date) !== weekStart);
+      const filtered = prev.filter((w) => (w.date || w.weekStart) !== dateKey);
       const merged = [newEntry, ...filtered].sort((a, b) => {
-        const ka = a.weekStart || a.date || '';
-        const kb = b.weekStart || b.date || '';
+        const ka = a.date || a.weekStart || '';
+        const kb = b.date || b.weekStart || '';
         return kb > ka ? 1 : -1;
       });
       return merged;
@@ -72,13 +72,21 @@ export default function DashboardPage({ user, profile, authReady }) {
       return updated.sort((a, b) => (b.weightLost ?? -Infinity) - (a.weightLost ?? -Infinity));
     });
     // Persist and refetch for consistency
-    await setWeightForWeek(user.uid, weight, weekStart);
+    await setWeightForDate(user.uid, weight, dateKey);
     const [w, users, allWeights] = await Promise.all([
       getWeightsForUser(user.uid),
       getAllUsers(),
       getAllWeights(),
     ]);
-    setWeights(w);
+    const hasNewEntry = w.some((x) => (x.date || x.weekStart) === dateKey);
+    if (hasNewEntry) {
+      setWeights(w);
+    } else {
+      const merged = [newEntry, ...w.filter((x) => (x.date || x.weekStart) !== dateKey)].sort(
+        (a, b) => ((b.date || b.weekStart) || '').localeCompare((a.date || a.weekStart) || '')
+      );
+      setWeights(merged);
+    }
     const byUser = {};
     allWeights.forEach((r) => {
       if (!byUser[r.userId]) byUser[r.userId] = [];

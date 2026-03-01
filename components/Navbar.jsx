@@ -1,4 +1,4 @@
-import { signOut } from '../lib/firebaseClient';
+import { signOut } from '../lib/firebaseClient.js';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 

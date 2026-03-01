@@ -12,7 +12,7 @@ export default function AuthForm({ mode = 'login', onSuccess, error: externalErr
     setError('');
     setLoading(true);
     try {
-      const { signInWithGoogle } = await import('../lib/firebaseClient');
+      const { signInWithGoogle } = await import('../lib/firebaseClient.js');
       await signInWithGoogle();
       onSuccess?.();
     } catch (err) {

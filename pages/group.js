@@ -19,6 +19,17 @@ export default function GroupPage({ user, authReady }) {
   const [showCustom, setShowCustom] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const fetchLeaderboard = async () => {
+    setLoading(true);
+    try {
+      const [u, w] = await Promise.all([getAllUsers(), getAllWeights()]);
+      setUsers(u);
+      setWeights(w);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!authReady || !user) {
       if (authReady && !user) router.replace('/login');
@@ -40,6 +51,17 @@ export default function GroupPage({ user, authReady }) {
     return () => { cancelled = true; };
   }, [authReady, user, router]);
 
+  // Refetch when tab becomes visible (e.g. after logging weight on dashboard)
+  useEffect(() => {
+    const onVisibilityChange = () => {
+      if (user && document.visibilityState === 'visible') {
+        fetchLeaderboard();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', onVisibilityChange);
+  }, [user]);
+
   const weightsByUser = {};
   weights.forEach((r) => {
     if (!weightsByUser[r.userId]) weightsByUser[r.userId] = [];
@@ -55,9 +77,19 @@ export default function GroupPage({ user, authReady }) {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-extrabold bg-gradient-to-r from-violet-400 via-purple-400 to-blue-500 bg-clip-text text-transparent">
-        Leaderboard
-      </h1>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h1 className="text-3xl font-extrabold bg-gradient-to-r from-violet-400 via-purple-400 to-blue-500 bg-clip-text text-transparent">
+          Leaderboard
+        </h1>
+        <button
+          type="button"
+          onClick={() => fetchLeaderboard()}
+          disabled={loading}
+          className="px-4 py-2 rounded-2xl text-sm font-bold bg-white/10 text-white/90 hover:bg-white/20 border border-white/20 disabled:opacity-50 transition-all"
+        >
+          {loading ? 'Refreshing…' : 'Refresh'}
+        </button>
+      </div>
       <div className="flex flex-wrap items-center gap-2">
         {FILTERS.map((f) => (
           <button

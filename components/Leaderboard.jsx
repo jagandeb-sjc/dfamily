@@ -1,4 +1,4 @@
-import { getStreakWeeks } from '../lib/dateUtils';
+import { getStreakWeeks, getLatestWeight } from '../lib/dateUtils';
 
 export default function Leaderboard({ entries, loading }) {
   if (loading) return <div className="text-center py-8 text-white/60 font-medium">Loading…</div>;
@@ -73,7 +73,7 @@ export function buildLeaderboardEntries(users, weightsByUser, filter) {
       }
     }
     const sorted = [...weights].sort((a, b) => (getDateKey(b) > getDateKey(a) ? 1 : -1));
-    const currentWeight = sorted[0]?.weight;
+    const currentWeight = getLatestWeight(weights);
     const originalWeight = user.startWeight != null && user.startWeight > 0 ? user.startWeight : null;
     const weightLost =
       originalWeight != null && currentWeight != null ? originalWeight - currentWeight : -Infinity;

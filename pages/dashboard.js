@@ -6,7 +6,7 @@ import {
   getAllUsers,
   getAllWeights,
 } from '../lib/firebaseClient';
-import { getStreakWeeks } from '../lib/dateUtils';
+import { getStreakWeeks, getLatestWeight } from '../lib/dateUtils';
 import ProgressCard from '../components/ProgressCard';
 import AddWeightForm from '../components/AddWeightForm';
 import WeightChart from '../components/WeightChart';
@@ -50,6 +50,28 @@ export default function DashboardPage({ user, profile, authReady }) {
   }, [authReady, user, router]);
 
   const handleWeightSaved = async (weight, weekStart) => {
+    // Optimistic update: show new weight immediately
+    const newEntry = { weekStart, weight, date: weekStart, userId: user.uid };
+    setWeights((prev) => {
+      const filtered = prev.filter((w) => (w.weekStart || w.date) !== weekStart);
+      const merged = [newEntry, ...filtered].sort((a, b) => {
+        const ka = a.weekStart || a.date || '';
+        const kb = b.weekStart || b.date || '';
+        return kb > ka ? 1 : -1;
+      });
+      return merged;
+    });
+    setLeaderboardEntries((prev) => {
+      const myEntry = prev.find((e) => e.userId === user.uid);
+      if (!myEntry) return prev;
+      const updated = prev.map((e) =>
+        e.userId === user.uid
+          ? { ...e, currentWeight: weight, weightLost: (e.originalWeight ?? 0) - weight }
+          : e
+      );
+      return updated.sort((a, b) => (b.weightLost ?? -Infinity) - (a.weightLost ?? -Infinity));
+    });
+    // Persist and refetch for consistency
     await setWeightForWeek(user.uid, weight, weekStart);
     const [w, users, allWeights] = await Promise.all([
       getWeightsForUser(user.uid),
@@ -71,7 +93,7 @@ export default function DashboardPage({ user, profile, authReady }) {
   const targetWeight = profile?.targetWeight ?? 0;
   const getDateKey = (w) => w.date || w.weekStart;
   const sortedWeights = [...weights].sort((a, b) => (getDateKey(b) > getDateKey(a) ? 1 : -1));
-  const currentWeight = sortedWeights[0]?.weight ?? null;
+  const currentWeight = getLatestWeight(weights) ?? null;
   const mostRecentWeek = sortedWeights[0] ? getDateKey(sortedWeights[0]) : null;
   const previousWeekEntry = sortedWeights[1];
   const previousWeekWeight = previousWeekEntry?.weight ?? null;
